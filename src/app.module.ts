@@ -11,6 +11,10 @@ import { ArtistController } from './artist/artist.controller';
 import { ArtistModule } from './artist/artist.module';
 import { ArtistService } from './artist/artist.service';
 import { InMemoryArtistStorage } from './artist/store/artist.storage';
+import { FavsController } from './favs/favs.controller';
+import { FavsModule } from './favs/favs.module';
+import { FavsService } from './favs/favs.service';
+import { InMemoryFavsStorage } from './favs/store/favs.storage';
 import { InMemoryTrackStorage } from './track/store/track.storage';
 import { TrackController } from './track/track.controller';
 import { TrackModule } from './track/track.module';
@@ -26,6 +30,7 @@ import { UserService } from './user/user.service';
     TrackModule,
     ArtistModule,
     AlbumModule,
+    FavsModule,
     ConfigModule.forRoot(),
   ],
   controllers: [
@@ -34,6 +39,7 @@ import { UserService } from './user/user.service';
     TrackController,
     AlbumController,
     ArtistController,
+    FavsController,
   ],
   providers: [
     AppService,
@@ -56,6 +62,11 @@ import { UserService } from './user/user.service';
     {
       provide: 'AlbumStore',
       useClass: InMemoryAlbumStorage,
+    },
+    FavsService,
+    {
+      provide: 'FavsStore',
+      useClass: InMemoryFavsStorage,
     },
   ],
 })

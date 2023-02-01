@@ -39,7 +39,7 @@ export class TrackController {
   }
 
   @Put(':id')
-  updatePassword(
+  update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {

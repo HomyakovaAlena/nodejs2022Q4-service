@@ -39,7 +39,7 @@ export class ArtistController {
   }
 
   @Put(':id')
-  updatePassword(
+  update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
