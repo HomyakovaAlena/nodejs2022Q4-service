@@ -6,6 +6,7 @@ export interface TrackStore {
   findAll: () => TrackEntity[];
   findById: (id: string) => TrackEntity | undefined;
   findByArtistId: (id: string) => TrackEntity[] | undefined;
+  findByAlbumId: (id: string) => TrackEntity[] | undefined;
   create: (createTrackDto: CreateTrackDto) => TrackEntity;
   update: (id: string, updateTrackDto: UpdateTrackDto) => TrackEntity;
   delete: (id: string) => void;

@@ -1,5 +1,9 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { AlbumController } from './album/album.controller';
+import { AlbumModule } from './album/album.module';
+import { AlbumService } from './album/album.service';
+import { InMemoryAlbumStorage } from './album/store/album.storage';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -17,11 +21,18 @@ import { UserModule } from './user/user.module';
 import { UserService } from './user/user.service';
 
 @Module({
-  imports: [UserModule, TrackModule, ArtistModule, ConfigModule.forRoot()],
+  imports: [
+    UserModule,
+    TrackModule,
+    ArtistModule,
+    AlbumModule,
+    ConfigModule.forRoot(),
+  ],
   controllers: [
     AppController,
     UserController,
     TrackController,
+    AlbumController,
     ArtistController,
   ],
   providers: [
@@ -40,6 +51,11 @@ import { UserService } from './user/user.service';
     {
       provide: 'ArtistStore',
       useClass: InMemoryArtistStorage,
+    },
+    AlbumService,
+    {
+      provide: 'AlbumStore',
+      useClass: InMemoryAlbumStorage,
     },
   ],
 })

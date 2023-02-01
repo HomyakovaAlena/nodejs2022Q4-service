@@ -25,6 +25,10 @@ export class InMemoryTrackStorage implements TrackStore {
     return this.tracks.filter((track) => track.artistId === id);
   }
 
+  findByAlbumId(id: string) {
+    return this.tracks.filter((track) => track.albumId === id);
+  }
+
   create(createTrackDto: CreateTrackDto) {
     const track = {
       ...createTrackDto,
