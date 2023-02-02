@@ -13,7 +13,15 @@ import { TrackService } from 'src/track/track.service';
 import { ArtistService } from 'src/artist/artist.service';
 import { AlbumService } from 'src/album/album.service';
 import { ItemUnprocessable } from './errors/item-unprocessable.error';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+import { FavsResponseDto } from './dto/favs-response.dto';
 
+@ApiTags('Favs')
 @Controller('favs')
 export class FavsController {
   constructor(
@@ -24,11 +32,26 @@ export class FavsController {
   ) {}
 
   @Get()
-  findAll() {
+  @ApiResponse({
+    status: 200,
+    description:
+      'Get all records (all favorite records (not their ids), split by entity type).',
+  })
+  findAll(): FavsResponseDto {
     return this.favsService.findAll();
   }
 
   @Post('track/:id')
+  @ApiCreatedResponse({
+    description: 'The record has been successfully added to favorites.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Id is invalid (not uuid)',
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Record with this id does not exist.',
+  })
   addTrack(@Param('id', new ParseUUIDPipe()) id: string) {
     const track = this.trackService.findById(id);
     if (!track) {
@@ -38,6 +61,16 @@ export class FavsController {
   }
 
   @Post('album/:id')
+  @ApiCreatedResponse({
+    description: 'The record has been successfully added to favorites.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Id is invalid (not uuid)',
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Record with this id does not exist.',
+  })
   addAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
     const album = this.albumService.findById(id);
     if (!album) {
@@ -47,6 +80,16 @@ export class FavsController {
   }
 
   @Post('artist/:id')
+  @ApiCreatedResponse({
+    description: 'The record has been successfully added to favorites.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Id is invalid (not uuid)',
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Record with this id does not exist.',
+  })
   addArtist(@Param('id', new ParseUUIDPipe()) id: string) {
     const artist = this.artistService.findById(id);
     if (!artist) {
@@ -56,6 +99,17 @@ export class FavsController {
   }
 
   @Delete('track/:id')
+  @ApiResponse({
+    status: 204,
+    description: 'The record successfully removed from favorites.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Id is invalid (not uuid)',
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Corresponding record is not in favorites.',
+  })
   @HttpCode(204)
   removeTrack(@Param('id', new ParseUUIDPipe()) id: string) {
     const favs = this.favsService.deleteTrack(id);
@@ -67,6 +121,17 @@ export class FavsController {
   }
 
   @Delete('album/:id')
+  @ApiResponse({
+    status: 204,
+    description: 'The record successfully removed from favorites.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Id is invalid (not uuid)',
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Corresponding record is not in favorites.',
+  })
   @HttpCode(204)
   removeAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
     const favs = this.favsService.deleteAlbum(id);
@@ -78,6 +143,17 @@ export class FavsController {
   }
 
   @Delete('artist/:id')
+  @ApiResponse({
+    status: 204,
+    description: 'The record successfully removed from favorites.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Id is invalid (not uuid)',
+  })
+  @ApiResponse({
+    status: 422,
+    description: 'Corresponding record is not in favorites.',
+  })
   @HttpCode(204)
   removeArtist(@Param('id', new ParseUUIDPipe()) id: string) {
     const favs = this.favsService.deleteArtist(id);

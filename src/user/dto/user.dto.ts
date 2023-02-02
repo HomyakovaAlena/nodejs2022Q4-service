@@ -1,3 +1,5 @@
+import { ApiProperty, ApiBody } from '@nestjs/swagger';
+
 export class UserDto {
   id: string;
   login: string;
