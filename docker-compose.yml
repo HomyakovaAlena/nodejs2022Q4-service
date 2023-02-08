@@ -1,0 +1,7 @@
+version: '3.0'
+services:
+  home-library-service:
+    image: home-library-service-image
+    build: .
+    ports:
+      - '${PORT}:${PORT}'
