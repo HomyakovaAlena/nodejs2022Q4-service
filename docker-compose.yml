@@ -1,7 +1,35 @@
 version: '3.0'
 services:
   home-library-service:
-    image: home-library-service-image
+    image: home-library-service
     build: .
     ports:
       - '${PORT}:${PORT}'
+    command: npm run start:dev
+    environment:
+      - PORT=${PORT}
+    restart: always
+    depends_on:
+      - db
+    volumes:
+      - .:${WORK_DIR}
+    networks:
+      - home-library-network
+  db:
+    build: ${PATH_TO_DATABASE}
+    ports:
+      - '${POSTGRES_PORT}:${POSTGRES_PORT}'
+    restart: always
+    environment:
+      - PATH_TO_DATABASE=${PATH_TO_DATABASE}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - PGDATA=${PGDATA}
+    volumes:
+      - ${PGVOLUMES}:${PGDATA}
+    networks:
+      - home-library-network
+networks:
+  home-library-network:
+    driver: bridge
