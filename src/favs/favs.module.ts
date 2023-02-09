@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { FavsService } from './favs.service';
 import { FavsController } from './favs.controller';
 import { InMemoryFavsStorage } from './store/favs.storage';
@@ -9,6 +10,7 @@ import { AlbumService } from 'src/album/album.service';
 import { ArtistService } from 'src/artist/artist.service';
 import { InMemoryAlbumStorage } from 'src/album/store/album.storage';
 import { InMemoryArtistStorage } from 'src/artist/store/artist.storage';
+import { FavsEntity } from './entities/favs.entity';
 
 @Module({
   controllers: [FavsController],
@@ -34,6 +36,6 @@ import { InMemoryArtistStorage } from 'src/artist/store/artist.storage';
       useClass: InMemoryArtistStorage,
     },
   ],
-  imports: [TrackModule],
+  imports: [TrackModule, TypeOrmModule.forFeature([FavsEntity])],
 })
 export class FavsModule {}

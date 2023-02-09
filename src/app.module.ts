@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import configService from '../ormconfig';
+
 import { AlbumController } from './album/album.controller';
 import { AlbumModule } from './album/album.module';
 import { AlbumService } from './album/album.service';
@@ -32,6 +35,7 @@ import { UserService } from './user/user.service';
     AlbumModule,
     FavsModule,
     ConfigModule.forRoot(),
+    TypeOrmModule.forRoot(configService),
   ],
   controllers: [
     AppController,
