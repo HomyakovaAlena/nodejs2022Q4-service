@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArtistService } from './artist.service';
 import { ArtistController } from './artist.controller';
-import { InMemoryArtistStorage } from './store/artist.storage';
 import { TrackModule } from 'src/track/track.module';
-import { InMemoryTrackStorage } from 'src/track/store/track.storage';
+import { PostgresArtistStorage } from './store/postgres-artist.storage';
+import { PostgresTrackStorage } from 'src/track/store/postgres-track.storage';
 import { ArtistEntity } from './entities/artist.entity';
 
 @Module({
@@ -13,13 +13,14 @@ import { ArtistEntity } from './entities/artist.entity';
     ArtistService,
     {
       provide: 'ArtistStore',
-      useClass: InMemoryArtistStorage,
+      useClass: PostgresArtistStorage,
     },
     {
       provide: 'TrackStore',
-      useClass: InMemoryTrackStorage,
+      useClass: PostgresTrackStorage,
     },
   ],
   imports: [TrackModule, TypeOrmModule.forFeature([ArtistEntity])],
+  exports: [TypeOrmModule],
 })
 export class ArtistModule {}

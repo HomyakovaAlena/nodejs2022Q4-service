@@ -3,10 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AlbumService } from './album.service';
 import { AlbumController } from './album.controller';
-import { InMemoryAlbumStorage } from './store/album.storage';
 import { TrackModule } from 'src/track/track.module';
-import { InMemoryTrackStorage } from 'src/track/store/track.storage';
 import { AlbumEntity } from './entities/album.entity';
+import { PostgresAlbumStorage } from './store/postgres-album.storage';
+import { PostgresTrackStorage } from 'src/track/store/postgres-track.storage';
 
 @Module({
   controllers: [AlbumController],
@@ -14,13 +14,14 @@ import { AlbumEntity } from './entities/album.entity';
     AlbumService,
     {
       provide: 'AlbumStore',
-      useClass: InMemoryAlbumStorage,
+      useClass: PostgresAlbumStorage,
     },
     {
       provide: 'TrackStore',
-      useClass: InMemoryTrackStorage,
+      useClass: PostgresTrackStorage,
     },
   ],
   imports: [TrackModule, TypeOrmModule.forFeature([AlbumEntity])],
+  exports: [TypeOrmModule],
 })
 export class AlbumModule {}

@@ -1,16 +1,18 @@
 import { Module } from '@nestjs/common';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { FavsService } from './favs.service';
 import { FavsController } from './favs.controller';
-import { InMemoryFavsStorage } from './store/favs.storage';
 import { TrackModule } from 'src/track/track.module';
-import { InMemoryTrackStorage } from 'src/track/store/track.storage';
 import { TrackService } from 'src/track/track.service';
 import { AlbumService } from 'src/album/album.service';
 import { ArtistService } from 'src/artist/artist.service';
-import { InMemoryAlbumStorage } from 'src/album/store/album.storage';
-import { InMemoryArtistStorage } from 'src/artist/store/artist.storage';
+import { PostgresAlbumStorage } from 'src/album/store/postgres-album.storage';
+import { PostgresArtistStorage } from 'src/artist/store/postgres-artist.storage';
+import { PostgresTrackStorage } from 'src/track/store/postgres-track.storage';
+import { PostgresFavsStorage } from './store/postgres-favs.storage';
 import { FavsEntity } from './entities/favs.entity';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { ArtistModule } from 'src/artist/artist.module';
+import { AlbumModule } from 'src/album/album.module';
 
 @Module({
   controllers: [FavsController],
@@ -21,21 +23,27 @@ import { FavsEntity } from './entities/favs.entity';
     ArtistService,
     {
       provide: 'FavsStore',
-      useClass: InMemoryFavsStorage,
+      useClass: PostgresFavsStorage,
     },
     {
       provide: 'TrackStore',
-      useClass: InMemoryTrackStorage,
+      useClass: PostgresTrackStorage,
     },
     {
       provide: 'AlbumStore',
-      useClass: InMemoryAlbumStorage,
+      useClass: PostgresAlbumStorage,
     },
     {
       provide: 'ArtistStore',
-      useClass: InMemoryArtistStorage,
+      useClass: PostgresArtistStorage,
     },
   ],
-  imports: [TrackModule, TypeOrmModule.forFeature([FavsEntity])],
+  imports: [
+    TrackModule,
+    ArtistModule,
+    AlbumModule,
+    TypeOrmModule.forFeature([FavsEntity]),
+  ],
+  exports: [TypeOrmModule],
 })
 export class FavsModule {}

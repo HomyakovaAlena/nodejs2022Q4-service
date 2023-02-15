@@ -1,28 +1,29 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import configService from '../ormconfig';
+import { dataSourceConfig } from '../typeorm.config';
 
 import { AlbumController } from './album/album.controller';
 import { AlbumModule } from './album/album.module';
 import { AlbumService } from './album/album.service';
-import { InMemoryAlbumStorage } from './album/store/album.storage';
+import { PostgresAlbumStorage } from './album/store/postgres-album.storage';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ArtistController } from './artist/artist.controller';
 import { ArtistModule } from './artist/artist.module';
 import { ArtistService } from './artist/artist.service';
-import { InMemoryArtistStorage } from './artist/store/artist.storage';
+import { PostgresArtistStorage } from './artist/store/postgres-artist.storage';
 import { FavsController } from './favs/favs.controller';
 import { FavsModule } from './favs/favs.module';
 import { FavsService } from './favs/favs.service';
-import { InMemoryFavsStorage } from './favs/store/favs.storage';
-import { InMemoryTrackStorage } from './track/store/track.storage';
+import { PostgresFavsStorage } from './favs/store/postgres-favs.storage';
+import { PostgresTrackStorage } from './track/store/postgres-track.storage';
 import { TrackController } from './track/track.controller';
 import { TrackModule } from './track/track.module';
 import { TrackService } from './track/track.service';
-import { InMemoryUserStorage } from './user/store/user.storage';
+import { UserEntity } from './user/entities/user.entity';
+import { PostgresUserStorage } from './user/store/postgres-user.storage';
 import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
 import { UserService } from './user/user.service';
@@ -35,42 +36,44 @@ import { UserService } from './user/user.service';
     AlbumModule,
     FavsModule,
     ConfigModule.forRoot(),
-    TypeOrmModule.forRoot(configService),
+    TypeOrmModule.forRoot({
+      ...dataSourceConfig,
+    }),
   ],
   controllers: [
     AppController,
-    UserController,
     TrackController,
     AlbumController,
     ArtistController,
     FavsController,
+    UserController,
   ],
   providers: [
     AppService,
     UserService,
     {
       provide: 'UserStore',
-      useClass: InMemoryUserStorage,
+      useClass: PostgresUserStorage,
     },
     TrackService,
     {
       provide: 'TrackStore',
-      useClass: InMemoryTrackStorage,
+      useClass: PostgresTrackStorage,
     },
     ArtistService,
     {
       provide: 'ArtistStore',
-      useClass: InMemoryArtistStorage,
+      useClass: PostgresArtistStorage,
     },
     AlbumService,
     {
       provide: 'AlbumStore',
-      useClass: InMemoryAlbumStorage,
+      useClass: PostgresAlbumStorage,
     },
     FavsService,
     {
       provide: 'FavsStore',
-      useClass: InMemoryFavsStorage,
+      useClass: PostgresFavsStorage,
     },
   ],
 })

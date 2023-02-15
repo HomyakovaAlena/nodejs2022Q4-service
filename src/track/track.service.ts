@@ -8,27 +8,27 @@ import { TrackStore } from './interfaces/track.store.interface';
 export class TrackService implements ITrackService {
   constructor(@Inject('TrackStore') private readonly trackStore: TrackStore) {}
 
-  findAll() {
-    const trackEntities = this.trackStore.findAll();
+  async findAll() {
+    const trackEntities = await this.trackStore.findAll();
     return trackEntities;
   }
 
-  findById(id: string) {
-    const trackEntity = this.trackStore.findById(id);
+  async findById(id: string) {
+    const trackEntity = await this.trackStore.findById(id);
     return trackEntity;
   }
 
-  create(createTrackDto: CreateTrackDto) {
-    const trackEntity = this.trackStore.create(createTrackDto);
+  async create(createTrackDto: CreateTrackDto) {
+    const trackEntity = await this.trackStore.create(createTrackDto);
     return trackEntity;
   }
 
-  update(id: string, updateTrackDto: UpdateTrackDto) {
-    const trackEntity = this.trackStore.update(id, updateTrackDto);
+  async update(id: string, updateTrackDto: UpdateTrackDto) {
+    const trackEntity = await this.trackStore.update(id, updateTrackDto);
     return trackEntity;
   }
 
-  delete(id: string) {
-    this.trackStore.delete(id);
+  async delete(id: string) {
+    return await this.trackStore.delete(id);
   }
 }

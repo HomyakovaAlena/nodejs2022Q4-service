@@ -8,27 +8,27 @@ import { AlbumStore } from './interfaces/album.store.interface';
 export class AlbumService implements IAlbumService {
   constructor(@Inject('AlbumStore') private readonly albumStore: AlbumStore) {}
 
-  findAll() {
-    const albumEntities = this.albumStore.findAll();
+  async findAll() {
+    const albumEntities = await this.albumStore.findAll();
     return albumEntities;
   }
 
-  findById(id: string) {
-    const albumEntity = this.albumStore.findById(id);
+  async findById(id: string) {
+    const albumEntity = await this.albumStore.findById(id);
     return albumEntity;
   }
 
-  create(createAlbumDto: CreateAlbumDto) {
-    const albumEntity = this.albumStore.create(createAlbumDto);
+  async create(createAlbumDto: CreateAlbumDto) {
+    const albumEntity = await this.albumStore.create(createAlbumDto);
     return albumEntity;
   }
 
-  update(id: string, updateAlbumDto: UpdateAlbumDto) {
-    const albumEntity = this.albumStore.update(id, updateAlbumDto);
+  async update(id: string, updateAlbumDto: UpdateAlbumDto) {
+    const albumEntity = await this.albumStore.update(id, updateAlbumDto);
     return albumEntity;
   }
 
-  delete(id: string) {
-    this.albumStore.delete(id);
+  async delete(id: string) {
+    return await this.albumStore.delete(id);
   }
 }

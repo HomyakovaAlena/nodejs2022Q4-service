@@ -1,11 +1,11 @@
 import { CreateAlbumDto } from '../dto/create-album.dto';
-import { AlbumResponseDto } from '../dto/album-response.dto';
 import { UpdateAlbumDto } from '../dto/update-album.dto';
+import { AlbumEntity } from '../entities/album.entity';
 
 export interface IAlbumService {
-  findAll: () => AlbumResponseDto[];
-  findById: (id: string) => AlbumResponseDto | undefined;
-  create: (createAlbumDto: CreateAlbumDto) => AlbumResponseDto;
-  update: (id: string, updateAlbumDto: UpdateAlbumDto) => AlbumResponseDto;
-  delete: (id: string) => void;
+  findAll: () => Promise<AlbumEntity[]>;
+  findById: (id: string) => Promise<AlbumEntity | undefined>;
+  create: (createAlbumDto: CreateAlbumDto) => Promise<AlbumEntity>;
+  update: (id: string, updateAlbumDto: UpdateAlbumDto) => Promise<AlbumEntity>;
+  delete: (id: string) => Promise<AlbumEntity>;
 }
