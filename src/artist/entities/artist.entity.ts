@@ -1,13 +1,6 @@
 import { ApiProperty, ApiBody } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { AlbumEntity } from 'src/album/entities/album.entity';
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('artist')
 export class ArtistEntity {

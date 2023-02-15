@@ -1,12 +1,12 @@
-import { AlbumEntity } from 'src/album/entities/album.entity';
-import { ArtistEntity } from 'src/artist/entities/artist.entity';
-import { TrackEntity } from 'src/track/entities/track.entity';
+import { AlbumResponseDto } from 'src/album/dto/album-response.dto';
+import { ArtistResponseDto } from 'src/artist/dto/artist-response.dto';
+import { TrackResponseDto } from 'src/track/dto/track-response.dto';
 
 export interface FavsStore {
   findAll: () => Promise<{
-    tracks: TrackEntity[];
-    albums: AlbumEntity[];
-    artists: ArtistEntity[];
+    tracks: TrackResponseDto[];
+    albums: AlbumResponseDto[];
+    artists: ArtistResponseDto[];
   }>;
 
   addTrack: (id: string) => Promise<string>;

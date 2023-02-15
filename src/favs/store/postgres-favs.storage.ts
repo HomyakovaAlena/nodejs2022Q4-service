@@ -1,7 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
+import { AlbumService } from 'src/album/album.service';
 import { AlbumStore } from 'src/album/interfaces/album.store.interface';
+import { ArtistService } from 'src/artist/artist.service';
 import { ArtistStore } from 'src/artist/interfaces/artist.store.interface';
 import { TrackStore } from 'src/track/interfaces/track.store.interface';
+import { TrackService } from 'src/track/track.service';
 import { FavsStore } from '../interfaces/favs.store.interface';
 
 @Injectable()
@@ -10,12 +13,15 @@ export class PostgresFavsStorage implements FavsStore {
     @Inject('TrackStore') private readonly trackStore: TrackStore,
     @Inject('AlbumStore') private readonly albumStore: AlbumStore,
     @Inject('ArtistStore') private readonly artistStore: ArtistStore,
+    private readonly trackService: TrackService,
+    private readonly albumService: AlbumService,
+    private readonly artistService: ArtistService,
   ) {}
 
   async findAll() {
-    const tracks = await this.trackStore.findFavourite();
-    const albums = await this.albumStore.findFavourite();
-    const artists = await this.artistStore.findFavourite();
+    const tracks = await this.trackService.findFavourite();
+    const albums = await this.albumService.findFavourite();
+    const artists = await this.artistService.findFavourite();
     return { tracks, artists, albums };
   }
 

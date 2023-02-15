@@ -19,10 +19,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { FavsResponseDto } from './dto/favs-response.dto';
-import { TrackEntity } from 'src/track/entities/track.entity';
-import { AlbumEntity } from 'src/album/entities/album.entity';
-import { ArtistEntity } from 'src/artist/entities/artist.entity';
 
 @ApiTags('Favs')
 @Controller('favs')
@@ -40,11 +36,7 @@ export class FavsController {
     description:
       'Get all records (all favorite records (not their ids), split by entity type).',
   })
-  async findAll(): Promise<{
-    tracks: TrackEntity[];
-    albums: AlbumEntity[];
-    artists: ArtistEntity[];
-  }> {
+  async findAll() {
     return await this.favsService.findAll();
   }
 

@@ -10,5 +10,5 @@ export interface AlbumStore {
   removeFromFavourite: (id: string) => Promise<string | undefined>;
   create: (createAlbumDto: CreateAlbumDto) => Promise<AlbumEntity>;
   update: (id: string, updateAlbumDto: UpdateAlbumDto) => Promise<AlbumEntity>;
-  delete: (id: string) => Promise<AlbumEntity>;
+  delete: (id: string) => Promise<string>;
 }

@@ -1,13 +1,7 @@
 import { ApiProperty, ApiBody } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 import { ArtistEntity } from 'src/artist/entities/artist.entity';
-import {
-  Column,
-  Entity,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-} from 'typeorm';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity('album')
 export class AlbumEntity {
@@ -20,8 +14,11 @@ export class AlbumEntity {
   @Column()
   year: number;
 
-  @Column({ nullable: true })
-  artistId: string | null;
+  @ManyToOne(() => ArtistEntity, (artist) => artist.id, {
+    nullable: true,
+    onDelete: 'SET NULL',
+  })
+  artist?: ArtistEntity | null;
 
   @Column('boolean', { default: false })
   @Exclude()

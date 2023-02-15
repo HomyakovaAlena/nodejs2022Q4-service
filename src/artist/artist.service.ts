@@ -33,4 +33,9 @@ export class ArtistService implements IArtistService {
   async delete(id: string) {
     return await this.artistStore.delete(id);
   }
+
+  async findFavourite() {
+    const artists = await this.artistStore.findFavourite();
+    return artists;
+  }
 }

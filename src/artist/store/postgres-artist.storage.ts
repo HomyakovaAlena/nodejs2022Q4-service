@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm/dist';
 import { TrackStore } from 'src/track/interfaces/track.store.interface';
 import { Repository } from 'typeorm';
@@ -12,7 +12,8 @@ export class PostgresArtistStorage implements ArtistStore {
   constructor(
     @InjectRepository(ArtistEntity)
     private artistRepository: Repository<ArtistEntity>,
-    @Inject('TrackStore') private readonly trackStore: TrackStore,
+    @Inject(forwardRef(() => 'TrackStore'))
+    private readonly trackStore: TrackStore,
   ) {}
 
   async create(createArtistDto: CreateArtistDto) {
@@ -33,6 +34,36 @@ export class PostgresArtistStorage implements ArtistStore {
     });
     if (!artist) return;
     return artist;
+  }
+
+  async update(artistId: string, updateArtistDto: UpdateArtistDto) {
+    const artist = await this.artistRepository.findOne({
+      where: { id: artistId },
+    });
+    if (!artist) return;
+    const updatedArtist = {
+      id: artistId,
+      ...artist,
+      ...updateArtistDto,
+    };
+    await this.artistRepository.update(artistId, updateArtistDto);
+    return updatedArtist;
+  }
+
+  async delete(artistId: string) {
+    const artist = await this.artistRepository.findOne({
+      where: { id: artistId },
+    });
+    if (!artist) return;
+    const tracksOfArtist = await this.trackStore.findByArtistId(artistId);
+    for (const track of tracksOfArtist) {
+      const { artist, ...rest } = track;
+      await this.trackStore.update(track.id, {
+        ...rest,
+        artistId: null,
+      });
+    }
+    return await this.artistRepository.remove(artist);
   }
 
   async findFavourite() {
@@ -58,35 +89,5 @@ export class PostgresArtistStorage implements ArtistStore {
     const updatedTrack = { ...artist, isFavourite: false };
     await this.artistRepository.save(updatedTrack);
     return id;
-  }
-
-  async update(artistId: string, updateArtistDto: UpdateArtistDto) {
-    const artist = await this.artistRepository.findOne({
-      where: { id: artistId },
-    });
-    if (!artist) return;
-    const updatedArtist = {
-      id: artistId,
-      ...artist,
-      ...updateArtistDto,
-    };
-    await this.artistRepository.update(artistId, updateArtistDto);
-    return updatedArtist;
-  }
-
-  async delete(artistId: string) {
-    const artist = await this.artistRepository.findOne({
-      where: { id: artistId },
-    });
-    if (!artist) return;
-    const tracksOfArtist = await this.trackStore.findByArtistId(artistId);
-    for (const track of tracksOfArtist) {
-      const { artistId, ...rest } = track;
-      await this.trackStore.update(track.id, {
-        ...rest,
-        artistId: null,
-      });
-    }
-    return await this.artistRepository.remove(artist);
   }
 }

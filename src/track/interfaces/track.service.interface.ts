@@ -1,7 +1,6 @@
 import { CreateTrackDto } from '../dto/create-track.dto';
 import { TrackResponseDto } from '../dto/track-response.dto';
 import { UpdateTrackDto } from '../dto/update-track.dto';
-import { TrackEntity } from '../entities/track.entity';
 
 export interface ITrackService {
   findAll: () => Promise<TrackResponseDto[]>;
@@ -11,5 +10,6 @@ export interface ITrackService {
     id: string,
     updateTrackDto: UpdateTrackDto,
   ) => Promise<TrackResponseDto>;
-  delete: (id: string) => Promise<TrackEntity>;
+  delete: (id: string) => Promise<TrackResponseDto>;
+  findFavourite: () => Promise<TrackResponseDto[]>;
 }
