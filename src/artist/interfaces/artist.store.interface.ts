@@ -6,7 +6,8 @@ export interface ArtistStore {
   findAll: () => Promise<ArtistEntity[]>;
   findById: (id: string) => Promise<ArtistEntity | undefined>;
   findFavourite: () => Promise<ArtistEntity[] | undefined>;
-  removeFromFavourite: (id: string) => Promise<ArtistEntity | undefined>;
+  addToFavourite: (id: string) => Promise<string | undefined>;
+  removeFromFavourite: (id: string) => Promise<string | undefined>;
   create: (createArtistDto: CreateArtistDto) => Promise<ArtistEntity>;
   update: (
     id: string,

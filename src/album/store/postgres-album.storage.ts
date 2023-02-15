@@ -1,9 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm/dist';
 import { TrackStore } from 'src/track/interfaces/track.store.interface';
-import { IsNull, Not, Repository } from 'typeorm';
-
-import { v4 as uuidv4 } from 'uuid';
+import { Repository } from 'typeorm';
 import { CreateAlbumDto } from '../dto/create-album.dto';
 import { UpdateAlbumDto } from '../dto/update-album.dto';
 import { AlbumEntity } from '../entities/album.entity';
@@ -20,8 +18,6 @@ export class PostgresAlbumStorage implements AlbumStore {
   async create(createAlbumDto: CreateAlbumDto) {
     const album = await this.albumRepository.create({
       ...createAlbumDto,
-      id: uuidv4(),
-      favs: null,
     });
     return await this.albumRepository.save(album);
   }
@@ -40,21 +36,28 @@ export class PostgresAlbumStorage implements AlbumStore {
   }
 
   async findFavourite() {
-    const albums = await this.albumRepository.find({
-      where: { favs: !IsNull() },
+    const tracks = await this.albumRepository.find({
+      where: {
+        isFavourite: true,
+      },
     });
-    return albums;
+    return tracks;
+  }
+
+  async addToFavourite(id: string) {
+    const album = await this.findById(id);
+    if (!album) return;
+    const updatedAlbum = { ...album, isFavourite: true };
+    await this.albumRepository.update(album.id, updatedAlbum);
+    return id;
   }
 
   async removeFromFavourite(id: string) {
     const album = await this.findById(id);
-    const { favs, ...rest } = album;
-    const updatedAlbum = {
-      ...rest,
-      favs: null,
-    };
-    await this.albumRepository.update(id, updatedAlbum);
-    return updatedAlbum;
+    if (!album) return;
+    const updatedAlbum = { ...album, isFavourite: false };
+    await this.albumRepository.update(album.id, updatedAlbum);
+    return id;
   }
 
   async update(albumId: string, updateAlbumDto: UpdateAlbumDto) {
@@ -64,6 +67,7 @@ export class PostgresAlbumStorage implements AlbumStore {
     if (!album) return;
     const updatedAlbum = {
       id: albumId,
+      ...album,
       ...updateAlbumDto,
     };
     await this.albumRepository.update(albumId, updateAlbumDto);

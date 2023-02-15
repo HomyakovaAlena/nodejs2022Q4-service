@@ -1,9 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm/dist';
 import { TrackStore } from 'src/track/interfaces/track.store.interface';
-import { IsNull, Not, Repository } from 'typeorm';
-
-import { v4 as uuidv4 } from 'uuid';
+import { Repository } from 'typeorm';
 import { CreateArtistDto } from '../dto/create-artist.dto';
 import { UpdateArtistDto } from '../dto/update-artist.dto';
 import { ArtistEntity } from '../entities/artist.entity';
@@ -20,8 +18,6 @@ export class PostgresArtistStorage implements ArtistStore {
   async create(createArtistDto: CreateArtistDto) {
     const artist = await this.artistRepository.create({
       ...createArtistDto,
-      id: uuidv4(),
-      favs: null,
     });
     return await this.artistRepository.save(artist);
   }
@@ -42,22 +38,26 @@ export class PostgresArtistStorage implements ArtistStore {
   async findFavourite() {
     const artists = await this.artistRepository.find({
       where: {
-        favs: {
-          artists: !IsNull(),
-        },
+        isFavourite: true,
       },
     });
     return artists;
   }
 
+  async addToFavourite(id: string) {
+    const artist = await this.findById(id);
+    if (!artist) return;
+    const updatedArtist = { ...artist, isFavourite: true };
+    await this.artistRepository.save(updatedArtist);
+    return id;
+  }
+
   async removeFromFavourite(id: string) {
     const artist = await this.findById(id);
-    const updatedArtist = {
-      ...artist,
-      favs: null,
-    };
-    await this.artistRepository.save(updatedArtist);
-    return updatedArtist;
+    if (!artist) return;
+    const updatedTrack = { ...artist, isFavourite: false };
+    await this.artistRepository.save(updatedTrack);
+    return id;
   }
 
   async update(artistId: string, updateArtistDto: UpdateArtistDto) {
@@ -67,6 +67,7 @@ export class PostgresArtistStorage implements ArtistStore {
     if (!artist) return;
     const updatedArtist = {
       id: artistId,
+      ...artist,
       ...updateArtistDto,
     };
     await this.artistRepository.update(artistId, updateArtistDto);

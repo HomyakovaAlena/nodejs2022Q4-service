@@ -1,6 +1,6 @@
 import { ApiProperty, ApiBody } from '@nestjs/swagger';
+import { Exclude } from 'class-transformer';
 import { AlbumEntity } from 'src/album/entities/album.entity';
-import { FavsEntity } from 'src/favs/entities/favs.entity';
 import {
   Column,
   Entity,
@@ -20,8 +20,7 @@ export class ArtistEntity {
   @Column()
   grammy: boolean;
 
-  @ManyToOne(() => FavsEntity, (favs) => favs.artists, {
-    nullable: true,
-  })
-  favs?: FavsEntity | null;
+  @Column('boolean', { default: false })
+  @Exclude()
+  isFavourite = false;
 }

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiBody } from '@nestjs/swagger';
-import { FavsEntity } from 'src/favs/entities/favs.entity';
+import { Exclude } from 'class-transformer';
 import {
   Column,
   Entity,
@@ -25,8 +25,7 @@ export class TrackEntity {
   @Column()
   duration: number;
 
-  @ManyToOne(() => FavsEntity, (favs) => favs.tracks, {
-    nullable: true,
-  })
-  favs?: FavsEntity | null;
+  @Column('boolean', { default: false })
+  @Exclude()
+  isFavourite = false;
 }

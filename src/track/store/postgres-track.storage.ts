@@ -1,8 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm/dist';
-import { IsNull, Not, Repository } from 'typeorm';
-
-import { v4 as uuidv4 } from 'uuid';
+import { Repository } from 'typeorm';
 import { CreateTrackDto } from '../dto/create-track.dto';
 import { UpdateTrackDto } from '../dto/update-track.dto';
 import { TrackEntity } from '../entities/track.entity';
@@ -18,7 +16,6 @@ export class PostgresTrackStorage implements TrackStore {
   async create(createTrackDto: CreateTrackDto) {
     const track = await this.trackRepository.create({
       ...createTrackDto,
-      id: uuidv4(),
     });
     return await this.trackRepository.save(track);
   }
@@ -54,21 +51,27 @@ export class PostgresTrackStorage implements TrackStore {
 
   async findFavourite() {
     const tracks = await this.trackRepository.find({
-      relations: {
-        favs: true,
+      where: {
+        isFavourite: true,
       },
     });
     return tracks;
   }
 
+  async addToFavourite(id: string) {
+    const track = await this.findById(id);
+    if (!track) return;
+    const updatedTrack = { ...track, isFavourite: true };
+    await this.trackRepository.save(updatedTrack);
+    return id;
+  }
+
   async removeFromFavourite(id: string) {
     const track = await this.findById(id);
-    const { favs, ...rest } = track;
-    const updatedTrack = {
-      ...rest,
-      favs: null,
-    };
-    return await this.trackRepository.save(updatedTrack);
+    if (!track) return;
+    const updatedTrack = { ...track, isFavourite: false };
+    await this.trackRepository.save(updatedTrack);
+    return id;
   }
 
   async update(trackId: string, updateTrackDto: UpdateTrackDto) {
@@ -79,6 +82,7 @@ export class PostgresTrackStorage implements TrackStore {
 
     const updatedTrack = {
       id: trackId,
+      ...track,
       ...updateTrackDto,
     };
     await this.trackRepository.save(updateTrackDto);

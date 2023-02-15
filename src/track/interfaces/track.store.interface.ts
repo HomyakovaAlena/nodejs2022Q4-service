@@ -8,7 +8,8 @@ export interface TrackStore {
   findByArtistId: (id: string) => Promise<TrackEntity[] | undefined>;
   findByAlbumId: (id: string) => Promise<TrackEntity[] | undefined>;
   findFavourite: () => Promise<TrackEntity[] | undefined>;
-  removeFromFavourite: (id: string) => Promise<TrackEntity | undefined>;
+  addToFavourite: (id: string) => Promise<string | undefined>;
+  removeFromFavourite: (id: string) => Promise<string | undefined>;
   create: (createTrackDto: CreateTrackDto) => Promise<TrackEntity>;
   update: (id: string, updateTrackDto: UpdateTrackDto) => Promise<TrackEntity>;
   delete: (id: string) => Promise<TrackEntity>;

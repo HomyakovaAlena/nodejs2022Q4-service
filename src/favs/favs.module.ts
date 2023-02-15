@@ -9,8 +9,6 @@ import { PostgresAlbumStorage } from 'src/album/store/postgres-album.storage';
 import { PostgresArtistStorage } from 'src/artist/store/postgres-artist.storage';
 import { PostgresTrackStorage } from 'src/track/store/postgres-track.storage';
 import { PostgresFavsStorage } from './store/postgres-favs.storage';
-import { FavsEntity } from './entities/favs.entity';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { ArtistModule } from 'src/artist/artist.module';
 import { AlbumModule } from 'src/album/album.module';
 
@@ -38,12 +36,6 @@ import { AlbumModule } from 'src/album/album.module';
       useClass: PostgresArtistStorage,
     },
   ],
-  imports: [
-    TrackModule,
-    ArtistModule,
-    AlbumModule,
-    TypeOrmModule.forFeature([FavsEntity]),
-  ],
-  exports: [TypeOrmModule],
+  imports: [TrackModule, ArtistModule, AlbumModule],
 })
 export class FavsModule {}
