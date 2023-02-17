@@ -20,13 +20,12 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "docker:scan": "docker scan home-library-service",
-    "typeorm": "typeorm-ts-node-esm",
+    "typeorm": "npx typeorm-ts-node-esm",
     "typeorm:create": "npm run typeorm migration:create",
-    "typeorm:generate": "npm run typeorm migration:generate",
-    "typeorm:run": "npm run typeorm migration:run",
+    "typeorm:generate": "npm run typeorm migration:generate /src/migration/table -- -d /dist/typeorm.config.js",
+    "typeorm:run": "npm run typeorm migration:run -- -d /dist/typeorm.config.js",
     "typeorm:revert": "npm run typeorm migration:revert",
-    "migration": "npx typeorm-ts-node-esm migration:generate ./dist/migration/table -d ./dist/typeorm.config.js && npx typeorm-ts-node-esm migration:run -d ./dist/typeorm.config.js",
-    "migration-generate": "npx typeorm-ts-node-esm migration:generate ./dist/migration/table -d ./dist/typeorm.config.js"
+    "migration": "npm run typeorm:generate && npm run typeorm:run"
   },
   "dependencies": {
     "@nestjs/common": "^8.0.0",

@@ -11,8 +11,9 @@ export const dataSourceConfig = {
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
   synchronize: true,
+  autoLoadEntities: true,
   entities: ['/dist/**/entities/*.entity.js'],
-  migrations: ['/dist/migration/*.ts', '/dist/migration/*.js'],
+  migrations: ['/src/migration/*.ts'],
   migrationsRun: false,
   logging: true,
   migrationsTableName: 'migration',
@@ -25,6 +26,13 @@ export const dataSourceConfig = {
 
 const datasource = new DataSource(dataSourceConfig);
 
-datasource.initialize();
+datasource
+  .initialize()
+  .then(() => {
+    console.log('Data Source has been initialized!');
+  })
+  .catch((err) => {
+    console.error('Error during Data Source initialization', err);
+  });
 
 export default datasource;
