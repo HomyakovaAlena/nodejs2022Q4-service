@@ -6,8 +6,8 @@ export class CreateTrackDto {
   @IsNotEmpty()
   name: string;
 
-  artistId: string;
-  albumId: string;
+  artistId?: string | null;
+  albumId?: string | null;
 
   @IsInt()
   @IsNotEmpty()

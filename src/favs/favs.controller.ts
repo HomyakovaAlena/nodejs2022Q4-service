@@ -19,7 +19,6 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { FavsResponseDto } from './dto/favs-response.dto';
 
 @ApiTags('Favs')
 @Controller('favs')
@@ -37,8 +36,8 @@ export class FavsController {
     description:
       'Get all records (all favorite records (not their ids), split by entity type).',
   })
-  findAll(): FavsResponseDto {
-    return this.favsService.findAll();
+  async findAll() {
+    return await this.favsService.findAll();
   }
 
   @Post('track/:id')
@@ -52,12 +51,12 @@ export class FavsController {
     status: 422,
     description: 'Record with this id does not exist.',
   })
-  addTrack(@Param('id', new ParseUUIDPipe()) id: string) {
-    const track = this.trackService.findById(id);
+  async addTrack(@Param('id', new ParseUUIDPipe()) id: string) {
+    const track = await this.trackService.findById(id);
     if (!track) {
       throw new ItemUnprocessable(id);
     }
-    return this.favsService.addTrack(id);
+    return await this.favsService.addTrack(id);
   }
 
   @Post('album/:id')
@@ -71,12 +70,12 @@ export class FavsController {
     status: 422,
     description: 'Record with this id does not exist.',
   })
-  addAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
-    const album = this.albumService.findById(id);
+  async addAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
+    const album = await this.albumService.findById(id);
     if (!album) {
       throw new ItemUnprocessable(id);
     }
-    return this.favsService.addAlbum(id);
+    return await this.favsService.addAlbum(id);
   }
 
   @Post('artist/:id')
@@ -90,12 +89,12 @@ export class FavsController {
     status: 422,
     description: 'Record with this id does not exist.',
   })
-  addArtist(@Param('id', new ParseUUIDPipe()) id: string) {
-    const artist = this.artistService.findById(id);
+  async addArtist(@Param('id', new ParseUUIDPipe()) id: string) {
+    const artist = await this.artistService.findById(id);
     if (!artist) {
       throw new ItemUnprocessable(id);
     }
-    return this.favsService.addArtist(id);
+    return await this.favsService.addArtist(id);
   }
 
   @Delete('track/:id')
@@ -111,8 +110,8 @@ export class FavsController {
     description: 'Corresponding record is not in favorites.',
   })
   @HttpCode(204)
-  removeTrack(@Param('id', new ParseUUIDPipe()) id: string) {
-    const favs = this.favsService.deleteTrack(id);
+  async removeTrack(@Param('id', new ParseUUIDPipe()) id: string) {
+    const favs = await this.favsService.deleteTrack(id);
     if (!favs) {
       throw new FavsNotFoundError(id);
     } else {
@@ -133,8 +132,8 @@ export class FavsController {
     description: 'Corresponding record is not in favorites.',
   })
   @HttpCode(204)
-  removeAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
-    const favs = this.favsService.deleteAlbum(id);
+  async removeAlbum(@Param('id', new ParseUUIDPipe()) id: string) {
+    const favs = await this.favsService.deleteAlbum(id);
     if (!favs) {
       throw new FavsNotFoundError(id);
     } else {
@@ -155,8 +154,8 @@ export class FavsController {
     description: 'Corresponding record is not in favorites.',
   })
   @HttpCode(204)
-  removeArtist(@Param('id', new ParseUUIDPipe()) id: string) {
-    const favs = this.favsService.deleteArtist(id);
+  async removeArtist(@Param('id', new ParseUUIDPipe()) id: string) {
+    const favs = await this.favsService.deleteArtist(id);
     if (!favs) {
       throw new FavsNotFoundError(id);
     } else {

@@ -10,27 +10,32 @@ export class ArtistService implements IArtistService {
     @Inject('ArtistStore') private readonly artistStore: ArtistStore,
   ) {}
 
-  findAll() {
-    const artistEntities = this.artistStore.findAll();
+  async findAll() {
+    const artistEntities = await this.artistStore.findAll();
     return artistEntities;
   }
 
-  findById(id: string) {
-    const artistEntity = this.artistStore.findById(id);
+  async findById(id: string) {
+    const artistEntity = await this.artistStore.findById(id);
     return artistEntity;
   }
 
-  create(createArtistDto: CreateArtistDto) {
-    const artistEntity = this.artistStore.create(createArtistDto);
+  async create(createArtistDto: CreateArtistDto) {
+    const artistEntity = await this.artistStore.create(createArtistDto);
     return artistEntity;
   }
 
-  update(id: string, updateArtistDto: UpdateArtistDto) {
-    const artistEntity = this.artistStore.update(id, updateArtistDto);
+  async update(id: string, updateArtistDto: UpdateArtistDto) {
+    const artistEntity = await this.artistStore.update(id, updateArtistDto);
     return artistEntity;
   }
 
-  delete(id: string) {
-    this.artistStore.delete(id);
+  async delete(id: string) {
+    return await this.artistStore.delete(id);
+  }
+
+  async findFavourite() {
+    const artists = await this.artistStore.findFavourite();
+    return artists;
   }
 }

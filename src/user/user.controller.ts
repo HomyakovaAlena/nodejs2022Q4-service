@@ -35,8 +35,8 @@ export class UserController {
   @ApiBadRequestResponse({
     description: 'Request body does not contain required fields',
   })
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  async create(@Body() createUserDto: CreateUserDto) {
+    return await this.usersService.create(createUserDto);
   }
 
   @Get()
@@ -44,8 +44,8 @@ export class UserController {
     status: 200,
     description: 'Get all records.',
   })
-  findAll() {
-    return this.usersService.findAll();
+  async findAll() {
+    return await this.usersService.findAll();
   }
 
   @Get(':id')
@@ -59,12 +59,12 @@ export class UserController {
   @ApiNotFoundResponse({
     description: 'The record not found.',
   })
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    const user = this.usersService.findById(id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const user = await this.usersService.findById(id);
     if (!user) {
       throw new UserNotFoundError();
     } else {
-      return this.usersService.findById(id);
+      return user;
     }
   }
 
@@ -80,11 +80,11 @@ export class UserController {
     description: 'The record not found.',
   })
   @ApiForbiddenResponse({ description: 'Forbidden. Old Password is wrong' })
-  updatePassword(
+  async updatePassword(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updatePasswordDto: UpdatePasswordDto,
   ) {
-    const { user, isValidPassword } = this.usersService.validateUser(
+    const { user, isValidPassword } = await this.usersService.validateUser(
       id,
       updatePasswordDto.oldPassword,
     );
@@ -109,8 +109,8 @@ export class UserController {
     description: 'The record not found. Record with this id does not exist',
   })
   @HttpCode(204)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    const user = this.usersService.findById(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    const user = await this.usersService.findById(id);
     if (!user) {
       throw new UserNotFoundError();
     } else {

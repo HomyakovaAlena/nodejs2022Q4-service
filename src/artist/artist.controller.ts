@@ -33,8 +33,8 @@ export class ArtistController {
   @ApiBadRequestResponse({
     description: 'Request body does not contain required fields',
   })
-  create(@Body() createArtistDto: CreateArtistDto) {
-    return this.artistService.create(createArtistDto);
+  async create(@Body() createArtistDto: CreateArtistDto) {
+    return await this.artistService.create(createArtistDto);
   }
 
   @Get()
@@ -42,8 +42,8 @@ export class ArtistController {
     status: 200,
     description: 'Get all records.',
   })
-  findAll() {
-    return this.artistService.findAll();
+  async findAll() {
+    return await this.artistService.findAll();
   }
 
   @Get(':id')
@@ -57,12 +57,12 @@ export class ArtistController {
   @ApiNotFoundResponse({
     description: 'The record not found.',
   })
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    const artist = this.artistService.findById(id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const artist = await this.artistService.findById(id);
     if (!artist) {
       throw new ArtistNotFoundError();
     } else {
-      return this.artistService.findById(id);
+      return artist;
     }
   }
 
@@ -77,15 +77,15 @@ export class ArtistController {
   @ApiNotFoundResponse({
     description: 'The record not found.',
   })
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateArtistDto: UpdateArtistDto,
   ) {
-    const artist = this.artistService.findById(id);
+    const artist = await this.artistService.findById(id);
     if (!artist) {
       throw new ArtistNotFoundError();
     } else {
-      return this.artistService.update(id, updateArtistDto);
+      return await this.artistService.update(id, updateArtistDto);
     }
   }
 
@@ -101,12 +101,12 @@ export class ArtistController {
     description: 'The record not found. Record with this id does not exist',
   })
   @HttpCode(204)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    const artist = this.artistService.findById(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    const artist = await this.artistService.findById(id);
     if (!artist) {
       throw new ArtistNotFoundError();
     } else {
-      return this.artistService.delete(id);
+      return await this.artistService.delete(id);
     }
   }
 }

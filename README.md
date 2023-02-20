@@ -21,17 +21,37 @@ npm install
 
 ## Running application
 
-### !! Rename file .env-example to .env.
+### !! Rename file .env-example to .env.   
+
+### 1. run the next command in the terminal and wait untill it fully finishes PostgreSQL migrations and application building:   
+```
+docker-compose up --build
+```
+Docker desktop must be started before the command execution (for Windows).
+You also should initialize your database connection in PGAdmin (enter credentials, host, port, other properties if needed).
+
+### 2. to run the commands inside container (type in another terminal):   
+```
+docker-compose exec home-library-service sh
+```
+
+and inside bash run for example (to test the application):
 
 ```
-npm start
+npm run test 
 ```
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/api/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
-## Testing
+### Use the following npm script for vulnerabilities scanning:
+```
+npm run docker:scan
+```
+
+
+## Testing (commands are available only inside docker container, see "Running application" section)
 
 After application running open new terminal and enter:
 
@@ -79,63 +99,6 @@ For more information, visit: https://code.visualstudio.com/docs/editor/debugging
 ## Usage
 
 The application operates with the following resources:\*\*
-
-- `User` (with attributes):
-
-  ```typescript
-  interface User {
-    id: string; // uuid v4
-    login: string;
-    password: string;
-    version: number; // integer number, increments on update
-    createdAt: number; // timestamp of creation
-    updatedAt: number; // timestamp of last update
-  }
-  ```
-
-- `Artist` (with attributes):
-
-  ```typescript
-  interface Artist {
-    id: string; // uuid v4
-    name: string;
-    grammy: boolean;
-  }
-  ```
-
-- `Track` (with attributes):
-
-  ```typescript
-  interface Track {
-    id: string; // uuid v4
-    name: string;
-    artistId: string | null; // refers to Artist
-    albumId: string | null; // refers to Album
-    duration: number; // integer number
-  }
-  ```
-
-- `Album` (with attributes):
-
-  ```typescript
-  interface Album {
-    id: string; // uuid v4
-    name: string;
-    year: number;
-    artistId: string | null; // refers to Artist
-  }
-  ```
-
-- `Favorites` (with attributes):
-  ```typescript
-  interface Favorites {
-    artists: string[]; // favorite artists ids
-    albums: string[]; // favorite albums ids
-    tracks: string[]; // favorite tracks ids
-  }
-  ```
-
-**Details:**
 
 1. For `Users`, `Artists`, `Albums`, `Tracks` and `Favorites` REST endpoints with separate router paths should be created
 

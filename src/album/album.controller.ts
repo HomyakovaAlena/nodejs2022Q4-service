@@ -33,8 +33,8 @@ export class AlbumController {
   @ApiBadRequestResponse({
     description: 'Request body does not contain required fields',
   })
-  create(@Body() createAlbumDto: CreateAlbumDto) {
-    return this.albumService.create(createAlbumDto);
+  async create(@Body() createAlbumDto: CreateAlbumDto) {
+    return await this.albumService.create(createAlbumDto);
   }
 
   @Get()
@@ -42,8 +42,8 @@ export class AlbumController {
     status: 200,
     description: 'Get all records.',
   })
-  findAll() {
-    return this.albumService.findAll();
+  async findAll() {
+    return await this.albumService.findAll();
   }
 
   @Get(':id')
@@ -57,12 +57,12 @@ export class AlbumController {
   @ApiNotFoundResponse({
     description: 'The record not found.',
   })
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    const album = this.albumService.findById(id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const album = await this.albumService.findById(id);
     if (!album) {
       throw new AlbumNotFoundError();
     } else {
-      return this.albumService.findById(id);
+      return album;
     }
   }
 
@@ -77,15 +77,15 @@ export class AlbumController {
   @ApiNotFoundResponse({
     description: 'The record not found.',
   })
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateAlbumDto: UpdateAlbumDto,
   ) {
-    const album = this.albumService.findById(id);
+    const album = await this.albumService.findById(id);
     if (!album) {
       throw new AlbumNotFoundError();
     } else {
-      return this.albumService.update(id, updateAlbumDto);
+      return await this.albumService.update(id, updateAlbumDto);
     }
   }
 
@@ -101,12 +101,12 @@ export class AlbumController {
     description: 'The record not found. Record with this id does not exist',
   })
   @HttpCode(204)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    const album = this.albumService.findById(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    const album = await this.albumService.findById(id);
     if (!album) {
       throw new AlbumNotFoundError();
     } else {
-      return this.albumService.delete(id);
+      return await this.albumService.delete(id);
     }
   }
 }

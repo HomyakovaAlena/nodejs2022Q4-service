@@ -33,8 +33,8 @@ export class TrackController {
   @ApiBadRequestResponse({
     description: 'Request body does not contain required fields',
   })
-  create(@Body() createTrackDto: CreateTrackDto) {
-    return this.trackService.create(createTrackDto);
+  async create(@Body() createTrackDto: CreateTrackDto) {
+    return await this.trackService.create(createTrackDto);
   }
 
   @Get()
@@ -42,8 +42,8 @@ export class TrackController {
     status: 200,
     description: 'Get all records.',
   })
-  findAll() {
-    return this.trackService.findAll();
+  async findAll() {
+    return await this.trackService.findAll();
   }
 
   @Get(':id')
@@ -57,12 +57,12 @@ export class TrackController {
   @ApiNotFoundResponse({
     description: 'The record not found.',
   })
-  findOne(@Param('id', new ParseUUIDPipe()) id: string) {
-    const track = this.trackService.findById(id);
+  async findOne(@Param('id', new ParseUUIDPipe()) id: string) {
+    const track = await this.trackService.findById(id);
     if (!track) {
       throw new TrackNotFoundError();
     } else {
-      return this.trackService.findById(id);
+      return track;
     }
   }
 
@@ -77,15 +77,15 @@ export class TrackController {
   @ApiNotFoundResponse({
     description: 'The record not found.',
   })
-  update(
+  async update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateTrackDto: UpdateTrackDto,
   ) {
-    const track = this.trackService.findById(id);
+    const track = await this.trackService.findById(id);
     if (!track) {
       throw new TrackNotFoundError();
     } else {
-      return this.trackService.update(id, updateTrackDto);
+      return await this.trackService.update(id, updateTrackDto);
     }
   }
 
@@ -101,12 +101,12 @@ export class TrackController {
     description: 'The record not found. Record with this id does not exist',
   })
   @HttpCode(204)
-  remove(@Param('id', new ParseUUIDPipe()) id: string) {
-    const track = this.trackService.findById(id);
+  async remove(@Param('id', new ParseUUIDPipe()) id: string) {
+    const track = await this.trackService.findById(id);
     if (!track) {
       throw new TrackNotFoundError();
     } else {
-      return this.trackService.delete(id);
+      return await this.trackService.delete(id);
     }
   }
 }
