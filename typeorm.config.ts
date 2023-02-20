@@ -10,18 +10,13 @@ export const dataSourceConfig = {
   username: process.env.POSTGRES_USER,
   password: process.env.POSTGRES_PASSWORD,
   database: process.env.POSTGRES_DB,
-  synchronize: true,
+  synchronize: false,
   autoLoadEntities: true,
   entities: ['/dist/**/entities/*.entity.js'],
-  migrations: ['/src/migration/*.ts'],
-  migrationsRun: false,
+  migrations: ['/dist/migration/*.js', '/dist/migration/*.ts'],
+  migrationsRun: true,
   logging: true,
-  migrationsTableName: 'migration',
-  keepConnectionAlive: true,
-  dropSchema: false,
-  cli: {
-    migrationsDir: '/src/migration',
-  },
+  migrationsTableName: 'table',
 } as DataSourceOptions;
 
 const datasource = new DataSource(dataSourceConfig);

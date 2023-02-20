@@ -23,7 +23,7 @@ npm install
 
 ### !! Rename file .env-example to .env.   
 
-### 1. run the next command in the terminal and wait untill it fully finishes building:   
+### 1. run the next command in the terminal and wait untill it fully finishes PostgreSQL migrations and application building:   
 ```
 docker-compose up --build
 ```
