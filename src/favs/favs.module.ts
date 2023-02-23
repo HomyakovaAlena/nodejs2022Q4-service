@@ -11,6 +11,7 @@ import { PostgresTrackStorage } from 'src/track/store/postgres-track.storage';
 import { PostgresFavsStorage } from './store/postgres-favs.storage';
 import { ArtistModule } from 'src/artist/artist.module';
 import { AlbumModule } from 'src/album/album.module';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Module({
   controllers: [FavsController],
@@ -35,6 +36,7 @@ import { AlbumModule } from 'src/album/album.module';
       provide: 'ArtistStore',
       useClass: PostgresArtistStorage,
     },
+    JwtAuthGuard,
   ],
   imports: [TrackModule, ArtistModule, AlbumModule],
 })

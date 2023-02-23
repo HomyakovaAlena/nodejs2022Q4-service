@@ -8,6 +8,7 @@ import { PostgresArtistStorage } from 'src/artist/store/postgres-artist.storage'
 import { PostgresAlbumStorage } from 'src/album/store/postgres-album.storage';
 import { ArtistModule } from 'src/artist/artist.module';
 import { AlbumModule } from 'src/album/album.module';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Module({
   controllers: [TrackController],
@@ -25,6 +26,7 @@ import { AlbumModule } from 'src/album/album.module';
       provide: 'AlbumStore',
       useClass: PostgresAlbumStorage,
     },
+    JwtAuthGuard,
   ],
   imports: [
     TypeOrmModule.forFeature([TrackEntity]),

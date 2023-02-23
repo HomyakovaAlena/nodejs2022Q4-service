@@ -8,6 +8,7 @@ import {
   Put,
   HttpCode,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { ArtistService } from './artist.service';
 import { CreateArtistDto } from './dto/create-artist.dto';
@@ -15,14 +16,18 @@ import { ArtistNotFoundError } from './errors/artist-not-found.error';
 import { UpdateArtistDto } from './dto/update-artist.dto';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('Artist')
 @Controller('artist')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class ArtistController {
   constructor(private readonly artistService: ArtistService) {}
 

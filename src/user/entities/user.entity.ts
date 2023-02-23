@@ -1,7 +1,9 @@
 import { ApiProperty, ApiBody } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from 'typeorm';
+
 @Entity('user')
+// @Unique(['login'])
 export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

@@ -1,5 +1,6 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { dataSourceConfig } from '../typeorm.config';
 import { AlbumController } from './album/album.controller';
@@ -12,6 +13,9 @@ import { ArtistController } from './artist/artist.controller';
 import { ArtistModule } from './artist/artist.module';
 import { ArtistService } from './artist/artist.service';
 import { PostgresArtistStorage } from './artist/store/postgres-artist.storage';
+import { AuthController } from './auth/auth.controller';
+import { AuthModule } from './auth/auth.module';
+import { AuthService } from './auth/auth.service';
 import { FavsController } from './favs/favs.controller';
 import { FavsModule } from './favs/favs.module';
 import { FavsService } from './favs/favs.service';
@@ -28,6 +32,7 @@ import { UserService } from './user/user.service';
 @Module({
   imports: [
     UserModule,
+    AuthModule,
     forwardRef(() => TrackModule),
     forwardRef(() => ArtistModule),
     forwardRef(() => AlbumModule),
@@ -35,6 +40,12 @@ import { UserService } from './user/user.service';
     ConfigModule.forRoot(),
     TypeOrmModule.forRoot({
       ...dataSourceConfig,
+    }),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET,
+      signOptions: {
+        expiresIn: +process.env.EXPIRES_IN,
+      },
     }),
   ],
   controllers: [
@@ -44,10 +55,13 @@ import { UserService } from './user/user.service';
     ArtistController,
     FavsController,
     UserController,
+    AuthController,
   ],
   providers: [
     AppService,
     UserService,
+    AuthService,
+    JwtService,
     {
       provide: 'UserStore',
       useClass: PostgresUserStorage,

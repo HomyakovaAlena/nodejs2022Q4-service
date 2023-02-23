@@ -8,6 +8,7 @@ import {
   Put,
   HttpCode,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { TrackService } from './track.service';
 import { CreateTrackDto } from './dto/create-track.dto';
@@ -15,14 +16,18 @@ import { TrackNotFoundError } from './errors/track-not-found.error';
 import { UpdateTrackDto } from './dto/update-track.dto';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('Track')
 @Controller('track')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class TrackController {
   constructor(private readonly trackService: TrackService) {}
 

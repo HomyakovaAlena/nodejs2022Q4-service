@@ -9,6 +9,7 @@ import { PostgresAlbumStorage } from './store/postgres-album.storage';
 import { PostgresTrackStorage } from 'src/track/store/postgres-track.storage';
 import { PostgresArtistStorage } from 'src/artist/store/postgres-artist.storage';
 import { ArtistModule } from 'src/artist/artist.module';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Module({
   controllers: [AlbumController],
@@ -26,6 +27,7 @@ import { ArtistModule } from 'src/artist/artist.module';
       provide: 'ArtistStore',
       useClass: PostgresArtistStorage,
     },
+    JwtAuthGuard,
   ],
   imports: [
     forwardRef(() => TrackModule),
