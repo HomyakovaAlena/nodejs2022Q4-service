@@ -64,16 +64,9 @@ export class CustomLoggerService extends ConsoleLogger {
         fileToWriteResolved = await this.createNewFileForLogLevel(logLevel);
       } else {
         const fileToWrite = `${process.env.PATH_TO_LOGS}${fileWithLastTimeStamp}`;
-        console.log({ fileToWrite });
         fileToWriteResolved = path.resolve(fileToWrite);
-        console.log({ fileToWriteResolved });
         const filesize = await this.getFileSize(fileToWriteResolved);
         const messageByteSize = new Blob([msgInLine]).size;
-        console.log(
-          { filesize },
-          { messageByteSize },
-          process.env.MAX_FILE_SIZE_IN_BYTES,
-        );
 
         if (
           filesize + messageByteSize >
@@ -82,11 +75,9 @@ export class CustomLoggerService extends ConsoleLogger {
           fileToWriteResolved = await this.createNewFileForLogLevel(logLevel);
         }
       }
-      console.log(`$write here: ${fileToWriteResolved}`);
       await fs.writeFile(fileToWriteResolved, msgInLine, { flag: 'a' });
     } catch (error) {
-      console.log(error);
-      throw new Error('Server logger operation failed');
+      this.error(error);
     }
   }
 
@@ -98,7 +89,7 @@ export class CustomLoggerService extends ConsoleLogger {
   private async formatCustomeMessage(message: string, logLevel: LogLevel) {
     const timestamp = this.getTimestamp();
     const levelFormatted = logLevel.toUpperCase();
-    return `${timestamp}    ${levelFormatted}:    ${message}`;
+    return `${timestamp}  ${levelFormatted}:  ${message}`;
   }
 
   private async getFileSize(path) {
@@ -111,7 +102,7 @@ export class CustomLoggerService extends ConsoleLogger {
       const files = await readdir(process.env.PATH_TO_LOGS);
       return files;
     } catch (err) {
-      console.error(err);
+      this.error(err);
     }
   }
 
@@ -133,14 +124,12 @@ export class CustomLoggerService extends ConsoleLogger {
         Number(file.slice(pathToSearchLength, file.length - 4)),
       );
       const maxTimeStamp = Math.max(...timestamps);
-      console.log({ maxTimeStamp });
       const maxIndex = timestamps.findIndex(
         (fileName) => fileName === maxTimeStamp,
       );
-      console.log(`filechosen: ${filesOfLevel[maxIndex]}`);
       return filesOfLevel[maxIndex];
     } catch (err) {
-      console.error(err);
+      this.error(err);
     }
   }
 
@@ -149,10 +138,9 @@ export class CustomLoggerService extends ConsoleLogger {
       const timestamp = Date.now();
       const fileToWrite = `${logFileConfig[logLevel]}${timestamp}.txt`;
       const resolvedPath = path.resolve(fileToWrite);
-      console.log({ resolvedPath });
       return resolvedPath;
     } catch (err) {
-      console.error(err);
+      this.error(err);
     }
   }
 }
