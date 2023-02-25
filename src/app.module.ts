@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { forwardRef, MiddlewareConsumer, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -28,6 +28,9 @@ import { PostgresUserStorage } from './user/store/postgres-user.storage';
 import { UserController } from './user/user.controller';
 import { UserModule } from './user/user.module';
 import { UserService } from './user/user.service';
+import { LoggerModule } from './logger/logger.module';
+import { CustomLoggerService } from './logger/logger.service';
+import CustomLoggerMiddleware from './logger/logger.middleware';
 
 @Module({
   imports: [
@@ -47,6 +50,7 @@ import { UserService } from './user/user.service';
         expiresIn: +process.env.EXPIRES_IN,
       },
     }),
+    LoggerModule,
   ],
   controllers: [
     AppController,
@@ -86,6 +90,12 @@ import { UserService } from './user/user.service';
       provide: 'FavsStore',
       useClass: PostgresFavsStorage,
     },
+    CustomLoggerService,
+    CustomLoggerMiddleware,
   ],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(CustomLoggerMiddleware).forRoutes('*');
+  }
+}
