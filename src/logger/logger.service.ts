@@ -1,7 +1,9 @@
 import * as fs from 'node:fs/promises';
 import { ConsoleLogger, Injectable, LogLevel } from '@nestjs/common';
-import { LoggerService } from '@nestjs/common';
 import * as os from 'node:os';
+import { stat } from 'fs/promises';
+import * as path from 'path';
+import { readdir } from 'node:fs/promises';
 import * as dotenv from 'dotenv';
 import { logFileConfig, logLevels } from './logger.constants';
 dotenv.config();
@@ -55,9 +57,33 @@ export class CustomLoggerService extends ConsoleLogger {
 
   private async writeToFile(message: string, logLevel: LogLevel) {
     try {
-      const fileToWrite = logFileConfig[logLevel];
+      const fileWithLastTimeStamp = await this.getLastLogFileOfLevel(logLevel);
       const msgInLine = message + os.EOL;
-      await fs.writeFile(fileToWrite, msgInLine, { flag: 'a' });
+      let fileToWriteResolved;
+      if (!fileWithLastTimeStamp) {
+        fileToWriteResolved = await this.createNewFileForLogLevel(logLevel);
+      } else {
+        const fileToWrite = `${process.env.PATH_TO_LOGS}${fileWithLastTimeStamp}`;
+        console.log({ fileToWrite });
+        fileToWriteResolved = path.resolve(fileToWrite);
+        console.log({ fileToWriteResolved });
+        const filesize = await this.getFileSize(fileToWriteResolved);
+        const messageByteSize = new Blob([msgInLine]).size;
+        console.log(
+          { filesize },
+          { messageByteSize },
+          process.env.MAX_FILE_SIZE_IN_BYTES,
+        );
+
+        if (
+          filesize + messageByteSize >
+          Number(process.env.MAX_FILE_SIZE_IN_BYTES)
+        ) {
+          fileToWriteResolved = await this.createNewFileForLogLevel(logLevel);
+        }
+      }
+      console.log(`$write here: ${fileToWriteResolved}`);
+      await fs.writeFile(fileToWriteResolved, msgInLine, { flag: 'a' });
     } catch (error) {
       console.log(error);
       throw new Error('Server logger operation failed');
@@ -73,5 +99,60 @@ export class CustomLoggerService extends ConsoleLogger {
     const timestamp = this.getTimestamp();
     const levelFormatted = logLevel.toUpperCase();
     return `${timestamp}    ${levelFormatted}:    ${message}`;
+  }
+
+  private async getFileSize(path) {
+    const stats = await stat(path);
+    return stats.size;
+  }
+
+  private async getLogFiles() {
+    try {
+      const files = await readdir(process.env.PATH_TO_LOGS);
+      return files;
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  private async getLastLogFileOfLevel(logLevel: LogLevel) {
+    try {
+      const files = await this.getLogFiles();
+      if (files.length === 0) {
+        return;
+      }
+      const pathToSearch = logLevel === 'error' ? 'error' : 'common';
+      const filesOfLevel = files.filter((file) =>
+        file.startsWith(pathToSearch),
+      );
+      if (filesOfLevel.length === 0) {
+        return;
+      }
+      const pathToSearchLength = pathToSearch.length;
+      const timestamps = filesOfLevel.map((file) =>
+        Number(file.slice(pathToSearchLength, file.length - 4)),
+      );
+      const maxTimeStamp = Math.max(...timestamps);
+      console.log({ maxTimeStamp });
+      const maxIndex = timestamps.findIndex(
+        (fileName) => fileName === maxTimeStamp,
+      );
+      console.log(`filechosen: ${filesOfLevel[maxIndex]}`);
+      return filesOfLevel[maxIndex];
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  private async createNewFileForLogLevel(logLevel: LogLevel) {
+    try {
+      const timestamp = Date.now();
+      const fileToWrite = `${logFileConfig[logLevel]}${timestamp}.txt`;
+      const resolvedPath = path.resolve(fileToWrite);
+      console.log({ resolvedPath });
+      return resolvedPath;
+    } catch (err) {
+      console.error(err);
+    }
   }
 }

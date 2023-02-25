@@ -9,6 +9,10 @@ import { BadRequestExceptionFilter } from './exception-filters/400-exception.fil
 import { JwtStrategy } from './strategies/jwt.strategy';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { PassportModule } from '@nestjs/passport';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from 'src/logger/all-exceptions.filter';
+import { LoggerModule } from 'src/logger/logger.module';
+import { CustomLoggerService } from 'src/logger/logger.service';
 
 dotenv.config();
 
@@ -25,6 +29,11 @@ dotenv.config();
     BadRequestExceptionFilter,
     JwtStrategy,
     JwtAuthGuard,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+    CustomLoggerService,
   ],
   imports: [
     JwtModule.register({
@@ -35,6 +44,7 @@ dotenv.config();
     }),
     UserModule,
     PassportModule,
+    LoggerModule,
   ],
   exports: [],
 })

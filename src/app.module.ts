@@ -31,6 +31,8 @@ import { UserService } from './user/user.service';
 import { LoggerModule } from './logger/logger.module';
 import { CustomLoggerService } from './logger/logger.service';
 import CustomLoggerMiddleware from './logger/logger.middleware';
+import { AllExceptionsFilter } from './logger/all-exceptions.filter';
+import { APP_FILTER } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -92,6 +94,10 @@ import CustomLoggerMiddleware from './logger/logger.middleware';
     },
     CustomLoggerService,
     CustomLoggerMiddleware,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
   ],
 })
 export class AppModule {

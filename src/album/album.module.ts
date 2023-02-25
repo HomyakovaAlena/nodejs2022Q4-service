@@ -10,6 +10,10 @@ import { PostgresTrackStorage } from 'src/track/store/postgres-track.storage';
 import { PostgresArtistStorage } from 'src/artist/store/postgres-artist.storage';
 import { ArtistModule } from 'src/artist/artist.module';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from 'src/logger/all-exceptions.filter';
+import { LoggerModule } from 'src/logger/logger.module';
+import { CustomLoggerService } from 'src/logger/logger.service';
 
 @Module({
   controllers: [AlbumController],
@@ -28,11 +32,17 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
       useClass: PostgresArtistStorage,
     },
     JwtAuthGuard,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+    CustomLoggerService,
   ],
   imports: [
     forwardRef(() => TrackModule),
     forwardRef(() => ArtistModule),
     TypeOrmModule.forFeature([AlbumEntity]),
+    LoggerModule,
   ],
   exports: [TypeOrmModule],
 })
