@@ -45,13 +45,14 @@ After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/api/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
+### To check for logs: Logs are written to files inside container in logs folder (with size rotation functionality)
 ### Use the following npm script for vulnerabilities scanning:
 ```
 npm run docker:scan
 ```
 
 
-## Testing (commands are available only inside docker container, see "Running application" section)
+## Testing (for auth task use: npm run test:auth)
 
 After application running open new terminal and enter:
 
