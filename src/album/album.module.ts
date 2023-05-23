@@ -1,9 +1,14 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
+
 import { AlbumService } from './album.service';
 import { AlbumController } from './album.controller';
-import { InMemoryAlbumStorage } from './store/album.storage';
 import { TrackModule } from 'src/track/track.module';
-import { InMemoryTrackStorage } from 'src/track/store/track.storage';
+import { AlbumEntity } from './entities/album.entity';
+import { PostgresAlbumStorage } from './store/postgres-album.storage';
+import { PostgresTrackStorage } from 'src/track/store/postgres-track.storage';
+import { PostgresArtistStorage } from 'src/artist/store/postgres-artist.storage';
+import { ArtistModule } from 'src/artist/artist.module';
 
 @Module({
   controllers: [AlbumController],
@@ -11,13 +16,22 @@ import { InMemoryTrackStorage } from 'src/track/store/track.storage';
     AlbumService,
     {
       provide: 'AlbumStore',
-      useClass: InMemoryAlbumStorage,
+      useClass: PostgresAlbumStorage,
     },
     {
       provide: 'TrackStore',
-      useClass: InMemoryTrackStorage,
+      useClass: PostgresTrackStorage,
+    },
+    {
+      provide: 'ArtistStore',
+      useClass: PostgresArtistStorage,
     },
   ],
-  imports: [TrackModule],
+  imports: [
+    forwardRef(() => TrackModule),
+    forwardRef(() => ArtistModule),
+    TypeOrmModule.forFeature([AlbumEntity]),
+  ],
+  exports: [TypeOrmModule],
 })
 export class AlbumModule {}

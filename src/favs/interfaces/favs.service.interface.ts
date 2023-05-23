@@ -1,17 +1,19 @@
-import { FavsResponseDto } from '../dto/favs-response.dto';
+import { AlbumResponseDto } from 'src/album/dto/album-response.dto';
+import { ArtistResponseDto } from 'src/artist/dto/artist-response.dto';
+import { TrackResponseDto } from 'src/track/dto/track-response.dto';
 
 export interface IFavsService {
-  findAll: () => FavsResponseDto;
+  findAll: () => Promise<{
+    tracks: TrackResponseDto[];
+    albums: AlbumResponseDto[];
+    artists: ArtistResponseDto[];
+  }>;
 
-  addTrack: (id: string) => string;
-  addAlbum: (id: string) => string;
-  addArtist: (id: string) => string;
+  addTrack: (id: string) => Promise<string>;
+  addAlbum: (id: string) => Promise<string>;
+  addArtist: (id: string) => Promise<string>;
 
-  deleteTrack: (id: string) => string | undefined;
-  deleteAlbum: (id: string) => string | undefined;
-  deleteArtist: (id: string) => string | undefined;
-
-  findTrackById: (id: string) => string | undefined;
-  findAlbumById: (id: string) => string | undefined;
-  findArtistById: (id: string) => string | undefined;
+  deleteTrack: (id: string) => Promise<string | undefined>;
+  deleteAlbum: (id: string) => Promise<string | undefined>;
+  deleteArtist: (id: string) => Promise<string | undefined>;
 }
