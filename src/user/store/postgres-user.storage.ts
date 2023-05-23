@@ -34,6 +34,12 @@ export class PostgresUserStorage implements UserStore {
     return user;
   }
 
+  async findByLogin(login: string) {
+    const user = await this.userRepository.findOne({ where: { login: login } });
+    if (!user) return;
+    return user;
+  }
+
   async updatePassword(userId: string, updatePasswordDto: UpdatePasswordDto) {
     const user = await this.userRepository.findOne({ where: { id: userId } });
     if (!user) return;

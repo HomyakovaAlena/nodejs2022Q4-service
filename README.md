@@ -35,23 +35,24 @@ You also should initialize your database connection in PGAdmin (enter credential
 docker-compose exec home-library-service sh
 ```
 
-and inside bash run for example (to test the application):
+and inside bash run for example (to test the application in auth mode):
 
 ```
-npm run test 
+npm run test:auth
 ```
 
 After starting the app on port (4000 as default) you can open
 in your browser OpenAPI documentation by typing http://localhost:4000/api/.
 For more information about OpenAPI/Swagger please visit https://swagger.io/.
 
+### To check for logs: Logs are written to files inside container in logs folder (with size rotation functionality)
 ### Use the following npm script for vulnerabilities scanning:
 ```
 npm run docker:scan
 ```
 
 
-## Testing (commands are available only inside docker container, see "Running application" section)
+## Testing (for auth task use: npm run test:auth)
 
 After application running open new terminal and enter:
 
@@ -231,3 +232,18 @@ The application operates with the following resources:\*\*
     - Server should answer with `status code` **204** if the artist was in favorites and now it's deleted id is found and deleted
     - Server should answer with `status code` **400** and corresponding message if `artistId` is invalid (not `uuid`)
     - Server should answer with `status code` **404** and corresponding message if corresponding artist is not favorite
+
+- `Signup` (`auth/signup` route)
+  - `POST auth/signup` - send `login` and `password` to create a new `user`
+    - Server should answer with `status code` **201** and corresponding message if dto is valid
+    - Server should answer with `status code` **400** and corresponding message if dto is invalid (no `login` or `password`, or they are not a `strings`)
+- `Login` (`auth/login` route)
+  - `POST auth/login` - send `login` and `password` to get Access token and Refresh token (optionally)
+    - Server should answer with `status code` **200** and tokens if dto is valid
+    - Server should answer with `status code` **400** and corresponding message if dto is invalid (no `login` or `password`, or they are not a `strings`)
+    - Server should answer with `status code` **403** and corresponding message if authentication failed (no user with such `login`, `password` doesn't match actual one, etc.)
+- `Refresh` (`auth/refresh` route)
+  - `POST auth/refresh` - send refresh token in body as `{ refreshToken }` to get new pair of Access token and Refresh token
+    - Server should answer with `status code` **200** and tokens in body if dto is valid
+    - Server should answer with `status code` **401** and corresponding message if dto is invalid (no `refreshToken` in body)
+    - Server should answer with `status code` **403** and corresponding message if authentication failed (Refresh token is invalid or expired)

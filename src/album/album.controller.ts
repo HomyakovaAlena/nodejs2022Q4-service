@@ -8,6 +8,7 @@ import {
   Put,
   HttpCode,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { CreateAlbumDto } from './dto/create-album.dto';
@@ -15,14 +16,18 @@ import { AlbumNotFoundError } from './errors/album-not-found.error';
 import { UpdateAlbumDto } from './dto/update-album.dto';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('Album')
 @Controller('album')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class AlbumController {
   constructor(private readonly albumService: AlbumService) {}
 

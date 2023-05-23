@@ -6,6 +6,7 @@ import {
   Delete,
   HttpCode,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { FavsService } from './favs.service';
 import { FavsNotFoundError } from './errors/favs-not-found.error';
@@ -15,13 +16,17 @@ import { AlbumService } from 'src/album/album.service';
 import { ItemUnprocessable } from './errors/item-unprocessable.error';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiCreatedResponse,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('Favs')
 @Controller('favs')
+@UseGuards(JwtAuthGuard)
+@ApiBearerAuth()
 export class FavsController {
   constructor(
     private readonly favsService: FavsService,

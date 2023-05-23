@@ -11,6 +11,11 @@ import { PostgresTrackStorage } from 'src/track/store/postgres-track.storage';
 import { PostgresFavsStorage } from './store/postgres-favs.storage';
 import { ArtistModule } from 'src/artist/artist.module';
 import { AlbumModule } from 'src/album/album.module';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { APP_FILTER } from '@nestjs/core';
+import { AllExceptionsFilter } from 'src/logger/all-exceptions.filter';
+import { LoggerModule } from 'src/logger/logger.module';
+import { CustomLoggerService } from 'src/logger/logger.service';
 
 @Module({
   controllers: [FavsController],
@@ -35,7 +40,13 @@ import { AlbumModule } from 'src/album/album.module';
       provide: 'ArtistStore',
       useClass: PostgresArtistStorage,
     },
+    JwtAuthGuard,
+    {
+      provide: APP_FILTER,
+      useClass: AllExceptionsFilter,
+    },
+    CustomLoggerService,
   ],
-  imports: [TrackModule, ArtistModule, AlbumModule],
+  imports: [TrackModule, ArtistModule, AlbumModule, LoggerModule],
 })
 export class FavsModule {}
